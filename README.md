@@ -1,2 +1,2 @@
-# covscript-curl
-cURL bindings for CovScript
+# covscript-zip
+Zip bindings for CovScript
