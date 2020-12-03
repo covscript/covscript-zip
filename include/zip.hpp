@@ -9,11 +9,10 @@
 
 namespace cov {
 	class zip {
-		zip_t *m_zip = nullptr;
+
 
 	public:
-		enum class openmode
-		{
+		enum class openmode {
 			read = 'r', write = 'w', append = 'a'
 		};
 		struct entry {
@@ -43,7 +42,11 @@ namespace cov {
 				::free(data);
 			}
 		};
-		explicit zip(const std::string &path, openmode mode = openmode::read)
+	private:
+		zip_t *m_zip = nullptr;
+		openmode m_mode;
+	public:
+		explicit zip(const std::string &path, openmode mode = openmode::read):m_mode(mode)
 		{
 			m_zip = zip_open(path.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, static_cast<char>(mode));
 		}
@@ -62,10 +65,10 @@ namespace cov {
 		}
 		optional<std::vector<entry>> get_entries()
 		{
+			if (m_mode != openmode::read)
+				return nullopt;
 			std::vector<entry> entries;
 			int n = zip_total_entries(m_zip);
-			if (n < 0)
-				return nullopt;
 			for (int i = 0; i < n; ++i) {
 				zip_entry_openbyindex(m_zip, i);
 				const char *name = zip_entry_name(m_zip);
@@ -101,8 +104,7 @@ namespace cov {
 				return false;
 			char buff[1024];
 			std::size_t actual_read = 0;
-			while (is.rdbuf()->in_avail() > 0)
-			{
+			while (is.rdbuf()->in_avail() > 0) {
 				actual_read = is.readsome(buff, sizeof(buff));
 				zip_entry_write(m_zip, buff, actual_read);
 			}
