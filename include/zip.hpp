@@ -47,6 +47,7 @@ namespace cov {
 		{
 			m_zip = zip_open(path.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, static_cast<char>(mode));
 		}
+		zip(const zip&) = delete;
 		~zip()
 		{
 			zip_close(m_zip);
@@ -59,10 +60,12 @@ namespace cov {
 		{
 			return is_open();
 		}
-		std::vector<entry> get_entries()
+		optional<std::vector<entry>> get_entries()
 		{
 			std::vector<entry> entries;
 			int n = zip_total_entries(m_zip);
+			if (n < 0)
+				return nullopt;
 			for (int i = 0; i < n; ++i) {
 				zip_entry_openbyindex(m_zip, i);
 				const char *name = zip_entry_name(m_zip);
@@ -72,7 +75,7 @@ namespace cov {
 				entries.emplace_back(name, isdir, size, crc32);
 				zip_entry_close(m_zip);
 			}
-			return std::move(entries);
+			return optional<std::vector<entry>>(in_place, std::move(entries));
 		}
 		optional<buffer> read_entry(const std::string& path)
 		{
@@ -125,12 +128,12 @@ namespace cov {
 		bool entry_delete(const std::string& path)
 		{
 			auto ptr = path.c_str();
-			return zip_entries_delete(m_zip, const_cast<char* const*>(&ptr), 1) < 0;
+			return zip_entries_delete(m_zip, const_cast<char* const*>(&ptr), 1) == 0;
 		}
 	};
 
-	void zip_extract(const std::string& zip_path, const std::string& target_path)
+	bool zip_extract(const std::string& zip_path, const std::string& target_path)
 	{
-		::zip_extract(zip_path.c_str(), target_path.c_str(), nullptr, nullptr);
+		return ::zip_extract(zip_path.c_str(), target_path.c_str(), nullptr, nullptr) == 0;
 	}
 }

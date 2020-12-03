@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 
-project(covscript-imgui)
+project(covscript-zip)
 
 if (DEFINED ENV{CS_DEV_PATH})
     include_directories($ENV{CS_DEV_PATH}/include)
@@ -31,15 +31,13 @@ else ()
     set(CMAKE_CXX_FLAGS "-fPIC -O3")
 endif ()
 
-add_library(curl_ext SHARED curl.cpp)
+include_directories(include)
 
-target_link_libraries(curl_ext covscript curl)
+add_library(zip STATIC zip.c)
+add_library(zip_ext SHARED zip.cpp)
 
-if (WIN32)
-    target_compile_definitions(curl_ext PRIVATE CURL_STATICLIB)
-    target_link_libraries(curl_ext nghttp2 ssl crypto zstd ssh2 z brotlidec-static brotlicommon-static ws2_32 wldap32 crypt32)
-endif ()
+target_link_libraries(zip_ext covscript zip)
 
-set_target_properties(curl_ext PROPERTIES OUTPUT_NAME curl)
-set_target_properties(curl_ext PROPERTIES PREFIX "")
-set_target_properties(curl_ext PROPERTIES SUFFIX ".cse")
+set_target_properties(zip_ext PROPERTIES OUTPUT_NAME zip)
+set_target_properties(zip_ext PROPERTIES PREFIX "")
+set_target_properties(zip_ext PROPERTIES SUFFIX ".cse")

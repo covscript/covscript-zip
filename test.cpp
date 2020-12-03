@@ -1,14 +1,15 @@
 #include "zip.hpp"
 #include <iostream>
-#include <fstream>
 
 int main()
 {
-    cov::zip file("./covscript.zip", cov::zip::openmode::append);
-    std::ifstream ifs("./cs.exe", std::ios::binary);
-    if (!ifs)
-        std::cout << "BAD!" << std::endl;
-    else
-        file.write_entry_stream("fxxk/a.exe", ifs);
+    cov::zip file("./a.zip", cov::zip::openmode::append);
+    auto opt = file.get_entries();
+    if (!opt)
+        std::cout << "OK" << std::endl;
+    else {
+        for (auto &it : *opt)
+            std::cout << it.name << std::endl;
+    }
     return 0;
 }
