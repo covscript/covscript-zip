@@ -24,30 +24,30 @@
 #include <covscript/dll.hpp>
 #include <covscript/cni.hpp>
 
-using zip_type = std::shared_ptr<cov::zip>;
+using cov_zip_t = std::shared_ptr<cov::zip>;
 
 namespace cs_impl {
 	template<>
 	struct type_conversion_cs<cov::zip&> {
-		using source_type=zip_type;
+		using source_type=cov_zip_t;
 	};
 
 	template<>
 	struct type_conversion_cs<const cov::zip&> {
-		using source_type=zip_type;
+		using source_type=cov_zip_t;
 	};
 
 	template<>
-	struct type_convertor<zip_type, cov::zip&> {
-		static cov::zip& convert(const zip_type &s)
+	struct type_convertor<cov_zip_t, cov::zip&> {
+		static cov::zip& convert(const cov_zip_t &s)
 		{
 			return *s;
 		}
 	};
 
 	template<>
-	struct type_convertor<zip_type, const cov::zip&> {
-		static const cov::zip& convert(const zip_type &s)
+	struct type_convertor<cov_zip_t, const cov::zip&> {
+		static const cov::zip& convert(const cov_zip_t &s)
 		{
 			return *s;
 		}
@@ -63,7 +63,7 @@ CNI_ROOT_NAMESPACE {
 		CNI_VALUE(append, cov::zip::openmode::append)
 	}
 
-	zip_type open(const std::string& path, cov::zip::openmode mode)
+	cov_zip_t open(const std::string& path, cov::zip::openmode mode)
 	{
 		return std::make_shared<cov::zip>(path, mode);
 	}
@@ -88,10 +88,10 @@ CNI_ROOT_NAMESPACE {
 		})
 	}
 
-	CNI_NAMESPACE(zip_typeype)
+	CNI_NAMESPACE(zip_type)
 	{
 		CNI_V(is_open, &cov::zip::is_open)
-		cs::var get_entries(zip_type& z) {
+		cs::var get_entries(cov_zip_t& z) {
 			auto opt = z->get_entries();
 			if (!opt)
 				return cs::null_pointer;
@@ -102,10 +102,10 @@ CNI_ROOT_NAMESPACE {
 			return value;
 		}
 		CNI(get_entries)
-		CNI_V(read_entry_stream, [](zip_type& z, const std::string& path, cs::ostream& os) {
+		CNI_V(read_entry_stream, [](cov_zip_t& z, const std::string& path, cs::ostream& os) {
 			return z->read_entry_stream(path, *os);
 		})
-		CNI_V(write_entry_stream, [](zip_type& z, const std::string& path, cs::istream& is) {
+		CNI_V(write_entry_stream, [](cov_zip_t& z, const std::string& path, cs::istream& is) {
 			return z->write_entry_stream(path, *is);
 		})
 		CNI_V(entry_add, &cov::zip::entry_add)
@@ -115,4 +115,4 @@ CNI_ROOT_NAMESPACE {
 }
 
 CNI_ENABLE_TYPE_EXT_V(entry_type, cov::zip::entry, cs::zip::entry)
-CNI_ENABLE_TYPE_EXT_V(zip_typeype, zip_type, cs::zip::zip_type)
+CNI_ENABLE_TYPE_EXT_V(zip_type, cov_zip_t, cs::zip::zip_type)
