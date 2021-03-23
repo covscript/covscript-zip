@@ -89,7 +89,7 @@ namespace cov {
 			if (m_mode != openmode::read)
 				return nullopt;
 			std::vector<entry> entries;
-			int n = zip_total_entries(m_zip);
+			int n = zip_entries_total(m_zip);
 			for (int i = 0; i < n; ++i) {
 				zip_entry_openbyindex(m_zip, i);
 				const char *name = zip_entry_name(m_zip);
