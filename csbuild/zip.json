@@ -1,0 +1,9 @@
+{
+    "Type": "Extension",
+    "Name": "zip",
+    "Info": "Zip Extension",
+    "Author": "CovScript Organization",
+    "Version": "1.0.1",
+    "Target": "build/imports/zip.cse",
+    "Dependencies": []
+}
