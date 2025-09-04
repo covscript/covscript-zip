@@ -5102,7 +5102,7 @@ static int mz_mkdir(const char *pDirname) {
 #define MZ_MKDIR(d) mkdir(d, 0755)
 
 #elif defined(__APPLE__) || defined(__FreeBSD__) ||                            \
-    (defined(__linux__) && defined(__x86_64__))
+    (defined(__linux__) && (defined(_LP64) || defined(__LP64__)))
 #ifndef MINIZ_NO_TIME
 #include <utime.h>
 #endif

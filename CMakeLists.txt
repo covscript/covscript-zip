@@ -33,10 +33,9 @@ endif ()
 
 include_directories(include)
 
-add_library(zip STATIC zip.c)
-add_library(zip_ext SHARED zip.cpp)
+add_library(zip_ext SHARED zip.c zip.cpp)
 
-target_link_libraries(zip_ext covscript zip)
+target_link_libraries(zip_ext covscript)
 
 set_target_properties(zip_ext PROPERTIES OUTPUT_NAME zip)
 set_target_properties(zip_ext PROPERTIES PREFIX "")
