@@ -26,34 +26,6 @@
 
 using cov_zip_t = std::shared_ptr<cov::zip>;
 
-namespace cs_impl {
-	template<>
-	struct type_conversion_cs<cov::zip&> {
-		using source_type=cov_zip_t;
-	};
-
-	template<>
-	struct type_conversion_cs<const cov::zip&> {
-		using source_type=cov_zip_t;
-	};
-
-	template<>
-	struct type_convertor<cov_zip_t, cov::zip&> {
-		static cov::zip& convert(const cov_zip_t &s)
-		{
-			return *s;
-		}
-	};
-
-	template<>
-	struct type_convertor<cov_zip_t, const cov::zip&> {
-		static const cov::zip& convert(const cov_zip_t &s)
-		{
-			return *s;
-		}
-	};
-}
-
 CNI_ROOT_NAMESPACE {
 	CNI_V(extract, cov::zip_extract)
 	CNI_NAMESPACE(openmode)
@@ -90,7 +62,9 @@ CNI_ROOT_NAMESPACE {
 
 	CNI_NAMESPACE(zip_type)
 	{
-		CNI_V(is_open, &cov::zip::is_open)
+		CNI_V(is_open, [](const cov_zip_t &z) {
+			return z->is_open();
+		})
 		cs::var get_entries(cov_zip_t& z) {
 			auto opt = z->get_entries();
 			if (!opt)
@@ -108,9 +82,15 @@ CNI_ROOT_NAMESPACE {
 		CNI_V(write_entry_stream, [](cov_zip_t& z, const std::string& path, cs::istream& is) {
 			return z->write_entry_stream(path, *is);
 		})
-		CNI_V(entry_add, &cov::zip::entry_add)
-		CNI_V(entry_extract, &cov::zip::entry_extract)
-		CNI_V(entry_delete, &cov::zip::entry_delete)
+		CNI_V(entry_add, [](cov_zip_t &z, const std::string& zip_path, const std::string& target_path) {
+			return z->entry_add(zip_path, target_path);
+		})
+		CNI_V(entry_extract, [](cov_zip_t &z, const std::string& zip_path, const std::string& target_path) {
+			return z->entry_extract(zip_path, target_path);
+		})
+		CNI_V(entry_delete, [](cov_zip_t &z, const std::string& path) {
+			return z->entry_delete(path);
+		})
 	}
 }
 

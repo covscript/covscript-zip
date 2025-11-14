@@ -3,7 +3,7 @@
     "Name": "zip",
     "Info": "Zip Extension",
     "Author": "CovScript Organization",
-    "Version": "0.3.5_v1",
+    "Version": "0.3.5_v1.1",
     "Target": "build/imports/zip.cse",
     "Dependencies": []
 }

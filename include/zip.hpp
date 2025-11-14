@@ -30,8 +30,6 @@
 
 namespace cov {
 	class zip {
-
-
 	public:
 		enum class openmode {
 			read = 'r', write = 'w', append = 'a'
